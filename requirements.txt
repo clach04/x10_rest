@@ -6,7 +6,8 @@
 pyserial>=3.1.1
 
 # Also needs an x10 driver library
+# http://www.averdevelopment.com/python/x10.html
+#   version 1.0 - for Python 3 2 print statements need manually updating
 # https://bitbucket.org/cdelker/python-x10-firecracker-interface/
 #   version 46b300343d3faa148e17479487581a28ebdfac0e
-# http://www.averdevelopment.com/python/x10.html
-#   version 1.0 - for Python 3 2 print statements need manaually updating
+#   Does NOT support house ON/OFF operations only on individual units
