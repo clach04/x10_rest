@@ -67,7 +67,7 @@ version = version_string = '%d.%d.%d' % version_tuple
 logging.basicConfig()
 default_logger = logging.getLogger(__name__)
 
-server_port = 1234
+http_server_port = 1234
 
 
 def scale_255_to_8(x):
@@ -339,8 +339,8 @@ def main(argv=None):
 
     log.info('Using serial port %r', serial_port_name)
 
-    httpd = make_server('', server_port, simple_app, server_class=MyWSGIServer, handler_class=MyWSGIRequestHandler)
-    log.info('Serving on http://%s:%d/' % (platform.node(), server_port))
+    httpd = make_server('', http_server_port, simple_app, server_class=MyWSGIServer, handler_class=MyWSGIRequestHandler)
+    log.info('Serving on http://%s:%d/' % (platform.node(), http_server_port))
     log.info('CTRL-C (or CTRL-Break) to quit')
     httpd.serve_forever()
     return 0
