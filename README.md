@@ -2,6 +2,14 @@
 
 REST interface to control X10 devices for Home Automation.
 
+### Table of Contents
+* [Information](#information)
+* [Getting Started](#getting-started)
+* [Design notes](#design-notes)
+
+
+## Information
+
 Aim of this project is to hook up https://home-assistant.io/components/switch.rest/ to a CM17A, serial Firecracker X10 unit.
 
 Other X10 device controllers could be supported by making calls to Mochad (and/or https://bitbucket.org/clach04/mochad_firecracker/) instead.
