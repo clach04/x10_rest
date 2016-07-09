@@ -61,6 +61,9 @@ except ImportError:
     # WARNING all on/off not supported with this module :-(
 
 
+version_tuple = (0, 0, 1)
+version = version_string = '%d.%d.%d' % version_tuple
+
 logging.basicConfig()
 default_logger = logging.getLogger(__name__)
 
@@ -310,6 +313,7 @@ def main(argv=None):
     log.setLevel(logging.INFO)
     log.setLevel(logging.DEBUG)  # DEBUG
 
+    log.info('x10 rest version %s', version)
     try:
         serial_port_name = argv[1]
         log.info('Serial port provided on command line')
