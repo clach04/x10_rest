@@ -6,6 +6,7 @@ Aim of this project is to hook up https://home-assistant.io/components/switch.re
 
 Other X10 device controllers could be supported by making calls to Mochad (and/or https://bitbucket.org/clach04/mochad_firecracker/) instead.
 
+NOTE by default this accepts all remote connections, without any authentication or authorization checks. It is recommended that this only listen and accept connections from localhost!
 
 Implemented in pure Python. Known to work with Python 2.7.
 
