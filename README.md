@@ -97,5 +97,9 @@ Why another REST interface to x10?
 What's next?
 
   * Support other X10 interfaces/controllers
-      * Using a different direct control module like https://github.com/glibersat/python-x10
-      * a bridge to another protocol like Mochad https://sourceforge.net/p/mochad (note mochad supports a limited number of controllers but https://bitbucket.org/clach04/mochad_firecracker/ supports an additional controller). E.g. see https://github.com/mtreinish/pymochad, https://github.com/SensorFlare/mochad-python/blob/master/mochad_python.py, https://pypi.python.org/pypi/hautomation_x10/0.10.5
+      * a bridge to another protocol like Mochad https://sourceforge.net/p/mochad (note mochad supports a limited number of controllers but https://bitbucket.org/clach04/mochad_firecracker/ supports an additional controller).
+        E.g. see:
+          * https://github.com/mtreinish/pymochad
+          * https://pypi.python.org/pypi/hautomation_x10/0.10.5
+          * https://github.com/SensorFlare/mochad-python/blob/master/mochad_python.py
+      * Using a different direct control module like https://github.com/glibersat/python-x10 - this module supports addition X10 controllers but the CM17A support does not work
