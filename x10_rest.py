@@ -69,6 +69,17 @@ default_logger = logging.getLogger(__name__)
 
 http_server_port = 1234
 
+def to_bytes(in_str):
+    # could choose to only encode for Python 3+
+    # could simple use latin1
+    return in_str.encode('utf-8')
+
+def to_string(in_str):
+    # could choose to only decode for Python 3+
+    # could simple use latin1
+    return in_str.decode('utf-8')
+
+
 
 def scale_255_to_8(x):
     """Scale x from 0..255 to 0..7
@@ -115,6 +126,8 @@ def x10_command(serial_port_name, house_code, unit_num, state, logger=None):
     """
 
     logger = logger or default_logger
+    logger.debug('py3 debug %r', (serial_port_name, house_code, unit_num, state, logger))
+    # DEBUG:__main__:py3 debug ('COM11', 'C', 6, b'ON', <logging.Logger object at 0x02D85250>)
 
     if unit_num is not None:
         unit_num = int(unit_num)
@@ -153,10 +166,6 @@ def x10_command(serial_port_name, house_code, unit_num, state, logger=None):
         logger.debug('x10_command_str send: %r', x10_command_str)
         x10.sendCommands(serial_port_name, x10_command_str)
 
-
-def to_bytes(in_str):
-    # could choose to only encode for Python 3+
-    return in_str.encode('utf-8')
 
 def not_found(environ, start_response):
     """serves 404s."""
@@ -224,6 +233,7 @@ def simple_app(environ, start_response):
             request_body_size = 0
         # Read POST body
         request_body = environ['wsgi.input'].read(request_body_size)
+        request_body = to_string(request_body)
         state = request_body
         # FIXME normalize state
         if unit_num is None:
