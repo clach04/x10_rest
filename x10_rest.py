@@ -15,7 +15,7 @@ https://bitbucket.org/clach04/mochad_firecracker/.
 
 Uses WSGI, see http://docs.python.org/library/wsgiref.html
 
-Python 2 or Python 3
+Python 2 or Python 3 for this script, x10 modules untested with Python 3.
 
 REST interface implemented is completely influenced by
 https://home-assistant.io/components/switch.rest/ behavior

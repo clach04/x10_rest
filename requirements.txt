@@ -1,0 +1,8 @@
+# PySerial 2.5 and 2.7 known to work
+pyserial>=2.5
+
+# Also needs an x10 driver library
+# https://bitbucket.org/cdelker/python-x10-firecracker-interface/
+#   version 46b300343d3faa148e17479487581a28ebdfac0e
+# http://www.averdevelopment.com/python/x10.html
+#   version 1.0
