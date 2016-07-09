@@ -16,7 +16,10 @@ Other X10 device controllers could be supported by making calls to Mochad (and/o
 
 NOTE by default this accepts all remote connections, without any authentication or authorization checks. It is recommended that this only listen and accept connections from localhost!
 
-Implemented in pure Python. Known to work with Python 2.7.
+Implemented in pure Python. Known to work with:
+
+  * Python 2.7
+  * Python 3.5
 
 ## Getting Started
 
