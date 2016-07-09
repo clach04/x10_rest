@@ -52,13 +52,20 @@ import sys
 from wsgiref.simple_server import make_server, WSGIServer, WSGIRequestHandler
 
 
+firecracker = None
+x10 = None
+mochad = None
+
 try:
-    import  x10  # http://www.averdevelopment.com/python/x10.html
-    firecracker = None
+    # https://github.com/jpardobl/hautomation_x10
+    import hautomation_x10.cmds as mochad
 except ImportError:
-    import firecracker  # https://bitbucket.org/cdelker/python-x10-firecracker-interface/
-    x10 = None
-    # WARNING all on/off not supported with this module :-(
+    mochad = None
+    try:
+        import  x10  # http://www.averdevelopment.com/python/x10.html
+    except ImportError:
+        import firecracker  # https://bitbucket.org/cdelker/python-x10-firecracker-interface/
+        # WARNING all on/off not supported with this module :-(
 
 
 version_tuple = (0, 0, 2)
@@ -143,12 +150,23 @@ def x10_command(serial_port_name, house_code, unit_num, state, log=None):
         # Assume some sort of 'ALL' command.
         if firecracker:
             log.error('using python-x10-firecracker-interface NO support for all ON/OFF')
+    state = state.lower()
 
-    if firecracker:
+    if mochad:
+        if state.startswith('xdim') or state.startswith('dim') or state.startswith('bright'):
+            raise NotImplementedError('xdim/dim/bright %r' % ((house_code, unit_num, state),))
+        else:
+            if unit_num is not None:
+                house_and_unit = '%s%d' % (house_code, unit_num)
+            else:
+                raise NotImplementedError('mochad all ON/OFF %r' % ((house_code, unit_num, state),))
+                house_and_unit = house_code
+            log.debug('mochad pl_switch: %r', (house_and_unit, state))
+            mochad.pl_switch(house_and_unit, state)
+    elif firecracker:
         log.debug('firecracker send: %r', (serial_port_name, house_code, unit_num, state))
         firecracker.send_command(serial_port_name, house_code, unit_num, state)
     else:
-        state = state.lower()
         if unit_num is not None:
             if state.startswith('xdim') or state.startswith('dim') or state.startswith('bright'):
                 dim_count = int(state.split()[-1])
