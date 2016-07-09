@@ -61,7 +61,7 @@ except ImportError:
     # WARNING all on/off not supported with this module :-(
 
 
-version_tuple = (0, 0, 1)
+version_tuple = (0, 0, 2)
 version = version_string = '%d.%d.%d' % version_tuple
 
 logging.basicConfig()
