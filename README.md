@@ -73,3 +73,5 @@ This will control house code C, units 4, 5, and 6.
   * All units (not just LAMPS) in house C can be switched OFF via all switches.
 
 NOTE CM17A Firecracker devices are controllers only, state can not be read so x10_rest emulates this as best it can. State can easily get out of sync with reality and so two presses may be required via HA.
+
+See `gen_sample_config.py` for a quick way to generate config suitable for copy/paste and then editing.
