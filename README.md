@@ -69,5 +69,7 @@ Edit `configuration.yaml`, sample additions:
         name: "C - all switches"
 
 This will control house code C, units 4, 5, and 6.
-All LAMP units in house C can be switched ON via all switches.
-All units (not just LAMPS) in house C can be switched OFF via all switches.
+  * All LAMP units in house C can be switched ON via all switches.
+  * All units (not just LAMPS) in house C can be switched OFF via all switches.
+
+NOTE CM17A Firecracker devices are controllers only, state can not be read so x10_rest emulates this as best it can. State can easily get out of sync with reality and so two presses may be required via HA.
