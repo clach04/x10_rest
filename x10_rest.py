@@ -80,13 +80,20 @@ def to_string(in_str):
     return in_str.decode('utf-8')
 
 
-
 def scale_255_to_8(x):
     """Scale x from 0..255 to 0..7
     0 is considered OFF
     8 is considered fully on
     """
     factor = x / 255.0
+    return 8 - int(abs(round(8 * factor)))
+
+def scale_31_to_8(x):
+    """Scale x from 0..31 to 0..7
+    0 is considered OFF
+    8 is considered fully on
+    """
+    factor = x / 31.0
     return 8 - int(abs(round(8 * factor)))
 
 # Mochad command constants - TODO make these an enum?
@@ -96,7 +103,6 @@ LAMPS_ON = 'all_lights_on'
 ON = 'ON'
 OFF = 'OFF'
 
-
 # Mappings from Mochad command to https://bitbucket.org/cdelker/python-x10-firecracker-interface/
 x10_mapping = {
     ALL_OFF: 'ALL OFF',
@@ -104,7 +110,7 @@ x10_mapping = {
     LAMPS_ON: 'Lamps On',
 }
 
-def x10_command(serial_port_name, house_code, unit_num, state, logger=None):
+def x10_command(serial_port_name, house_code, unit_num, state, log=None):
     """Send X10 command to Firecracker serial unit, attempts to
     normalize API irrespective of which x10 (serial) module is used.
 
@@ -113,36 +119,44 @@ def x10_command(serial_port_name, house_code, unit_num, state, logger=None):
     @param unit_num (1-16)- example=1 (or None to impact entire house code)
     @param state - Mochad command/state, See
             https://sourceforge.net/p/mochad/code/ci/master/tree/README
-            examples='OFF', 'ON', ALL_OFF, 'all_units_off', 'xdim 128', etc.
-    @param logger - Python logging object, if None a default logger will be used
+            examples=OFF, 'OFF', 'ON', ALL_OFF, 'all_units_off', 'xdim 128', etc.
+    @param log - Python logging object, if None a default log will be used
 
     Examples:
 
         x10_command('COM6', 'A', '1', 'ON')
         x10_command('/dev/ttyUSB0', 'A', '1', 'ON')
+        x10_command(serial_port_name, 'A', None, ON)
+        x10_command(serial_port_name, 'A', None, OFF)
         x10_command(serial_port_name, 'A', None, 'all_lights_off')
         x10_command(serial_port_name, 'A', None, 'all_units_off')
+        x10_command(serial_port_name, 'A', None, ALL_OFF)
         x10_command(serial_port_name, 'A', None, 'all_lights_on')
+        x10_command(serial_port_name, 'A', 1, 'xdim 128')
     """
 
-    logger = logger or default_logger
+    log = log or default_logger
 
     if unit_num is not None:
         unit_num = int(unit_num)
     else:
         # Assume some sort of 'ALL' command.
         if firecracker:
-            logger.error('using python-x10-firecracker-interface NO support for all ON/OFF')
+            log.error('using python-x10-firecracker-interface NO support for all ON/OFF')
 
     if firecracker:
-        logger.debug('firecracker send: %r', (serial_port_name, house_code, unit_num, state))
+        log.debug('firecracker send: %r', (serial_port_name, house_code, unit_num, state))
         firecracker.send_command(serial_port_name, house_code, unit_num, state)
     else:
+        state = state.lower()
         if unit_num is not None:
-            if state.lower().startswith('xdim'):
+            if state.startswith('xdim') or state.startswith('dim') or state.startswith('bright'):
                 dim_count = int(state.split()[-1])
-                ## TODO scale dim_count from 0..255 to 0..8 scale
-                dim_count = scale_255_to_8(dim_count)
+                if state.startswith('xdim'):
+                    dim_count = scale_255_to_8(dim_count)
+                else:
+                    # assumed dim or bright
+                    dim_count = scale_31_to_8(dim_count)
                 dim_str = ', %s dim' % (house_code, )
                 dim_list = []
                 for _ in range(dim_count):
@@ -158,10 +172,10 @@ def x10_command(serial_port_name, house_code, unit_num, state, logger=None):
                 x10_command_str = '%s%s %s' % (house_code, unit_num, state)
         else:
             # Assume a command for house not a specific unit
-            state = x10_mapping[state.lower()]
+            state = x10_mapping[state]
 
             x10_command_str = '%s %s' % (house_code, state)
-        logger.debug('x10_command_str send: %r', x10_command_str)
+        log.debug('x10_command_str send: %r', x10_command_str)
         x10.sendCommands(serial_port_name, x10_command_str)
 
 
