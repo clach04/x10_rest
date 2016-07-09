@@ -194,7 +194,8 @@ def simple_app(environ, start_response):
     print('unit_num: %r' % unit_num)
     # TODO checks after this should probably not be 404 errors..
     house_code = house_code.upper()
-    unit_num = int(unit_num)
+    if unit_num is not None:
+        unit_num = int(unit_num)
 
     if environ['REQUEST_METHOD'] == 'GET':
         house_status = x10_status.get(house_code)
@@ -216,10 +217,24 @@ def simple_app(environ, start_response):
         request_body = environ['wsgi.input'].read(request_body_size)
         state = request_body
         # FIXME normalize state
+        if unit_num is None:
+            # assume whole house
+            # could update HA configuration.yaml with custom body_on/body_off
+            # I _think_ this is easier and understandable for X10 users
+            # albeit all lamps on/all off (i.e. not just lamps) is unintuitive for non-X10 users
+            if state.upper() == ON:
+                state = LAMPS_ON
+            else:
+                # just assume all off
+                state = ALL_OFF
         # now send x10 command
         x10_command(serial_port_name, house_code, unit_num, state)
 
         # Now update state for GET
+        if state == LAMPS_ON:
+            state = ON
+        elif state == ALL_OFF:
+            state = OFF
         house_status = x10_status.get(house_code)
         if house_status is None:
             house_status = {}

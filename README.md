@@ -9,6 +9,8 @@ Other X10 device controllers could be supported by making calls to Mochad (and/o
 
 Implemented in pure Python. Known to work with Python 2.7.
 
+## Getting Started
+
 To get started:
 
     pip install -r requirements.txt
@@ -18,8 +20,7 @@ And manually get an X10 library, example:
     wget https://bitbucket.org/cdelker/python-x10-firecracker-interface/raw/46b300343d3faa148e17479487581a28ebdfac0e/firecracker.py
 
 
-Permissions under Linux
-=======================
+### Permissions under Linux
 
 Under Linux most users do not have serial port permissions,
 either:
@@ -31,6 +32,8 @@ Giver user dialout (serial port) access:
 
     # NOTE requires logout/login to take effect
     sudo usermod -a -G dialout $USER
+
+### Running
 
 Start x10 rest server via:
 
@@ -44,3 +47,27 @@ Example, Linux:
 
     x10_rest.py /dev/ttyUSB0
 
+
+### Configuration of Home Assistant
+
+Edit `configuration.yaml`, sample additions:
+
+    # https://home-assistant.io/components/switch.rest/
+    # X10 switches via https://github.com/clach04/x10_rest
+    switch:
+      - platform: rest
+        resource: http://localhost:1234/x10/C/6
+        name: "C6 Switch"
+      - platform: rest
+        resource: http://localhost:1234/x10/C/5
+        name: "C5 Switch"
+      - platform: rest
+        resource: http://localhost:1234/x10/C/4
+        name: "C4 Switch"
+      - platform: rest
+        resource: http://localhost:1234/x10/C
+        name: "C - all switches"
+
+This will control house code C, units 4, 5, and 6.
+All LAMP units in house C can be switched ON via all switches.
+All units (not just LAMPS) in house C can be switched OFF via all switches.
