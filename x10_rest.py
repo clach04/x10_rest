@@ -42,8 +42,14 @@ import mimetypes
 import os
 import platform
 from pprint import pprint
+import socket
+try:
+    import SocketServer
+except ImportError:
+    # Python 3
+    import socketserver as SocketServer
 import sys
-from wsgiref.simple_server import make_server
+from wsgiref.simple_server import make_server, WSGIServer, WSGIRequestHandler
 
 
 try:
@@ -247,6 +253,53 @@ def simple_app(environ, start_response):
     return result
 
 
+class MyWSGIRequestHandler(WSGIRequestHandler):
+    """Do not perform Fully Qualified Domain Lookup.
+    One networks with missing (or poor) DNS, getfqdn can take over 5 secs
+    EACH network IO"""
+
+    def address_string(self):
+        """Return the client address formatted for logging.
+
+        This version looks up the full hostname using gethostbyaddr(),
+        and tries to find a name that contains at least one dot.
+
+        """
+
+        host, port = self.client_address[:2]
+        return host  # socket.getfqdn(host)
+
+
+class MyWSGIServer(WSGIServer):
+    """Avoid default Python socket server oddities.
+
+     1) Do not perform Fully Qualified Domain Lookup.
+        On networks with missing (or poor) DNS, getfqdn() can take over
+        5 secs EACH network IO.
+     2) Do not allow address re-use.
+        On machines where something is already listening on the requested
+        port the default Windows socket setting for Python SocketServers
+        is to allow the bind to succeed (even though it can't then service
+        any requests).
+        One possible workaround for Windows is to set the
+        DisableAddressSharing registry entry:
+        (HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\services\Afd\Parameters)
+        and reboot. This registry setting prevents multiple sockets from binding
+        to the same port and is essentially enabling SO_EXCLUSIVEADDRUSE on
+        all sockets. See Java bug 6421091.
+    """
+
+    allow_reuse_address = False  # Use SO_EXCLUSIVEADDRUSE,  True only makes sense for testing
+
+    def server_bind(self):
+        """Override server_bind to store the server name."""
+        SocketServer.TCPServer.server_bind(self)
+        host, port = self.socket.getsockname()[:2]
+        self.server_name = host  # socket.getfqdn(host)  i.e. use as-is do *not* perform reverse lookup
+        self.server_port = port
+        self.setup_environ()
+
+
 def main(argv=None):
     if argv is None:
         argv = sys.argv
@@ -282,7 +335,7 @@ def main(argv=None):
 
     log.info('Using serial port %r', serial_port_name)
 
-    httpd = make_server('', server_port, simple_app)
+    httpd = make_server('', server_port, simple_app, server_class=MyWSGIServer, handler_class=MyWSGIRequestHandler)
     log.info('Serving on http://%s:%d/' % (platform.node(), server_port))
     log.info('CTRL-C (or CTRL-Break) to quit')
     httpd.serve_forever()
