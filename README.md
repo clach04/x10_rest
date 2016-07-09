@@ -76,3 +76,15 @@ This will control house code C, units 4, 5, and 6.
 NOTE CM17A Firecracker devices are controllers only, state can not be read so x10_rest emulates this as best it can. State can easily get out of sync with reality and so two presses may be required via HA.
 
 See `gen_sample_config.py` for a quick way to generate config suitable for copy/paste and then editing.
+
+## Design notes
+
+Why another REST interface to x10?
+
+  * All the ones at the time this was written did not supply a REST interface that https://home-assistant.io/components/switch.rest/ could use. Either the URL included the ON/OFF state or the REQUEST_METHOD was incompatible (e.g. PUT instead of GET/POST).
+
+What's next?
+
+  * Support other X10 interfaces/controllers
+      * Using a different direct control module like https://github.com/glibersat/python-x10
+      * a bridge to another protocol like Mochad https://sourceforge.net/p/mochad (note mochad supports a limited number of controllers but https://bitbucket.org/clach04/mochad_firecracker/ supports an additional controller). E.g. see https://github.com/mtreinish/pymochad, https://github.com/SensorFlare/mochad-python/blob/master/mochad_python.py, https://pypi.python.org/pypi/hautomation_x10/0.10.5
