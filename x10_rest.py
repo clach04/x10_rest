@@ -126,8 +126,6 @@ def x10_command(serial_port_name, house_code, unit_num, state, logger=None):
     """
 
     logger = logger or default_logger
-    logger.debug('py3 debug %r', (serial_port_name, house_code, unit_num, state, logger))
-    # DEBUG:__main__:py3 debug ('COM11', 'C', 6, b'ON', <logging.Logger object at 0x02D85250>)
 
     if unit_num is not None:
         unit_num = int(unit_num)
@@ -252,8 +250,16 @@ def simple_app(environ, start_response):
         # Now update state for GET
         if state == LAMPS_ON:
             state = ON
+            house_status = {}
+            for temp_unit_num in range(1, 16+1):
+                house_status[temp_unit_num] = state
+            x10_status[house_code] = house_status
+            # NOTE whilst status is internally correct, delay for HA client to read new status
         elif state == ALL_OFF:
             state = OFF
+            if x10_status.get(house_code):
+                del x10_status[house_code]
+                # NOTE whilst status is internally correct, delay for HA client to read new status
         house_status = x10_status.get(house_code)
         if house_status is None:
             house_status = {}
