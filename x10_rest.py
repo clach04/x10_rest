@@ -54,13 +54,10 @@ from wsgiref.simple_server import make_server, WSGIServer, WSGIRequestHandler
 
 firecracker = None
 x10 = None
-mochad = None
+mochad = None  # FIXME make this config
+mochad = True
 
-try:
-    # https://github.com/jpardobl/hautomation_x10
-    import hautomation_x10.cmds as mochad
-except ImportError:
-    mochad = None
+if mochad is None:
     try:
         import  x10  # http://www.averdevelopment.com/python/x10.html
     except ImportError:
@@ -76,6 +73,12 @@ default_logger = logging.getLogger(__name__)
 
 http_server_port = 1234
 
+# TODO allow config for three items below
+mochad_host = 'localhost'
+mochad_port = 1099
+mochad_type = 'rf'  # or 'pl'
+
+
 def to_bytes(in_str):
     # could choose to only encode for Python 3+
     # could simple use latin1
@@ -85,6 +88,33 @@ def to_string(in_str):
     # could choose to only decode for Python 3+
     # could simple use latin1
     return in_str.decode('utf-8')
+
+
+def netcat(hostname, port, content, log=None):
+    log = log or default_logger
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        log.debug("Trying connection to: %s:%s" % (hostname, port))
+        s.connect((hostname, port))
+
+        log.debug("Connected to: %s:%s" % (hostname, port))
+        s.sendall(b"%s\n" % content)
+        log.debug("sent: %s" % content)
+        s.shutdown(socket.SHUT_WR)
+        buff = ""
+
+        while True:
+            data = s.recv(1024)
+            if data == "":
+                break
+            buff = "%s%s" % (buff, data)
+        log.debug("Received: %s" % repr(buff))
+        s.close()
+        log.debug("Connection closed.")
+        return repr(buff)
+    except Exception as ex:
+        log.error("ERROR: %s" % ex)
+        raise ex
 
 
 def scale_255_to_8(x):
@@ -161,8 +191,9 @@ def x10_command(serial_port_name, house_code, unit_num, state, log=None):
             else:
                 raise NotImplementedError('mochad all ON/OFF %r' % ((house_code, unit_num, state),))
                 house_and_unit = house_code
-            log.debug('mochad pl_switch: %r', (house_and_unit, state))
-            mochad.pl_switch(house_and_unit, state)
+            mochad_cmd = b"%s %s %s\n" % (mochad_type, house_and_unit, state)
+            log.debug('mochad send: %r', mochad_cmd)
+            netcat(mochad_host, mochad_port, mochad_cmd)
     elif firecracker:
         log.debug('firecracker send: %r', (serial_port_name, house_code, unit_num, state))
         firecracker.send_command(serial_port_name, house_code, unit_num, state)
