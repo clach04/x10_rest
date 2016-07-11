@@ -90,6 +90,41 @@ See `gen_sample_config.py` for a quick way to generate config suitable for copy/
 
 ## Design notes
 
+
+### REST interface
+
+
+REST interface implemented is completely influenced by
+https://home-assistant.io/components/switch.rest/ behavior
+so only ON and OFF is supported.
+
+URL form:
+
+    /x10/{house code}/{optional_unit_number}
+
+if {optional_unit_number} is omitted means all units in {house code}.
+
+Examples:
+
+  * /x10/A
+  * /x10/A/1
+  * /x10/A/2
+  * /x10/B/1
+  * ...
+
+#### Demo
+
+    > curl http://localhost:1234/x10/C/4
+    OFF
+    > curl --data ON http://localhost:1234/x10/C/4
+
+    > curl http://localhost:1234/x10/C/4
+    ON
+    > curl --data OFF http://localhost:1234/x10/C/4
+
+
+### Notes
+
 Why another REST interface to x10?
 
   * All the ones at the time this was written did not supply a REST interface that https://home-assistant.io/components/switch.rest/ could use. Either the URL included the ON/OFF state or the REQUEST_METHOD was incompatible (e.g. PUT instead of GET/POST).
@@ -97,7 +132,7 @@ Why another REST interface to x10?
 What's next?
 
   * Support other X10 interfaces/controllers
-      * a bridge to another protocol like Mochad https://sourceforge.net/p/mochad (note mochad supports a limited number of controllers but https://bitbucket.org/clach04/mochad_firecracker/ supports an additional controller).
+      * a bridge to another protocol like Mochad (partially implemented) https://sourceforge.net/p/mochad (note mochad supports a limited number of controllers but https://bitbucket.org/clach04/mochad_firecracker/ supports an additional controller).
         E.g. see:
           * https://github.com/jpardobl/hautomation_x10 - known to work with https://bitbucket.org/clach04/mochad_firecracker/
           * https://github.com/mtreinish/pymochad
