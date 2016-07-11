@@ -102,7 +102,7 @@ URL form:
 
     /x10/{house code}/{optional_unit_number}
 
-if {optional_unit_number} is omitted means all units in {house code}.
+if `{optional_unit_number}` is omitted means all units in `{house code}`.
 
 Examples:
 
