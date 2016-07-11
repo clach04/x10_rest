@@ -54,8 +54,7 @@ from wsgiref.simple_server import make_server, WSGIServer, WSGIRequestHandler
 
 firecracker = None
 x10 = None
-mochad = None  # FIXME make this config
-mochad = True
+mochad = None  # FIXME make this config, currently hacky command line option
 
 if mochad is None:
     try:
@@ -387,12 +386,17 @@ def main(argv=None):
         argv = sys.argv
 
     global serial_port_name
+    global mochad
 
     log = default_logger
     log.setLevel(logging.INFO)
     log.setLevel(logging.DEBUG)  # DEBUG
 
     log.info('x10 rest version %s', version)
+    # The dumbest arg processing...
+    if '-m' in argv:
+        mochad = True
+        argv.remove('-m')
     try:
         serial_port_name = argv[1]
         log.info('Serial port provided on command line')
