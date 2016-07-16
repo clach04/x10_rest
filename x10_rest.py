@@ -65,7 +65,7 @@ if mochad is None:
 
 
 version_tuple = (0, 0, 2)
-version = version_string = '%d.%d.%d' % version_tuple
+version = version_string = __version__ = '%d.%d.%d' % version_tuple
 
 logging.basicConfig()
 default_logger = logging.getLogger(__name__)
