@@ -54,7 +54,7 @@ import x10_any
 from x10_any import OFF, ON, ALL_OFF, LAMPS_OFF, LAMPS_ON
 
 
-version_tuple = (0, 0, 2)
+version_tuple = (0, 0, 3)
 version = version_string = __version__ = '%d.%d.%d' % version_tuple
 
 logging.basicConfig()
