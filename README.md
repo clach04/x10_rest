@@ -27,10 +27,6 @@ To get started:
 
     pip install -r requirements.txt
 
-And manually get an X10 library, example:
-
-    wget https://bitbucket.org/cdelker/python-x10-firecracker-interface/raw/46b300343d3faa148e17479487581a28ebdfac0e/firecracker.py
-
 
 ### Permissions under Linux
 
@@ -49,7 +45,11 @@ Giver user dialout (serial port) access:
 
 Start x10 rest server via:
 
+    # CM17A Firecracker
     x10_rest.py SERIAL_PORT_NAME
+
+    # Mochad server (localhost on default port)
+    x10_rest.py -m
 
 Example, Windows:
 
@@ -131,10 +131,6 @@ Why another REST interface to x10?
 
 What's next?
 
-  * Support other X10 interfaces/controllers
-      * a bridge to another protocol like Mochad (partially implemented) https://sourceforge.net/p/mochad (note mochad supports a limited number of controllers but https://bitbucket.org/clach04/mochad_firecracker/ supports an additional controller).
-        E.g. see:
-          * https://github.com/jpardobl/hautomation_x10 - known to work with https://bitbucket.org/clach04/mochad_firecracker/
-          * https://github.com/mtreinish/pymochad
-          * https://github.com/SensorFlare/mochad-python/blob/master/mochad_python.py
-      * Using a different direct control module like https://github.com/glibersat/python-x10 - this module supports addition X10 controllers but the CM17A support does not work
+  * Support other X10 interfaces/controllers?
+  * Remove the need for this and implement X10 support as a
+    [Home Assistant Component](https://home-assistant.io/components).
