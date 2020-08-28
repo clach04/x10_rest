@@ -133,4 +133,4 @@ What's next?
 
   * Support other X10 interfaces/controllers?
   * Remove the need for this and implement X10 support as a
-    [Home Assistant Component](https://home-assistant.io/components).
+    [Home Assistant Component](https://home-assistant.io/components). See https://github.com/clach04/home-assistant-x10
