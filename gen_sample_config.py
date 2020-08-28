@@ -2,8 +2,10 @@
 # -*- coding: us-ascii -*-
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab
 #
-"""Generate demo config YAML
+"""Generate demo config YAML for Home Assistant REST Switch
 Python 2 or Python 3
+
+See https://www.home-assistant.io/integrations/switch.rest
 """
 
 import os
@@ -31,3 +33,4 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
+
