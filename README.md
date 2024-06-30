@@ -129,6 +129,8 @@ Why another REST interface to x10?
 
   * All the ones at the time this was written did not supply a REST interface that https://home-assistant.io/components/switch.rest/ could use. Either the URL included the ON/OFF state or the REQUEST_METHOD was incompatible (e.g. PUT instead of GET/POST).
 
+Also see x10_demoweb.py - non REST api, GET with side effects and GET (with side effects) simple web application, behaves like an X10 big remote.
+
 What's next?
 
   * Support other X10 interfaces/controllers?
